@@ -1,0 +1,13 @@
+#!/bin/bash -l
+#PBS -N ox_script
+#PBS -l ncpus=4
+#PBS -l mem=32768mb
+#PBS -l walltime=01:00:00
+#PBS -l nodes=compute-0-3
+#PBS -M jh2632@cornell.edu,han3751@gmail.com
+#PBS -m abe
+#PBS -j oe
+source /etc/profile.d/modules.sh
+cd ~/Dropbox/CompEcon_class/oxfiles
+module load ox
+oxl -rp10 ~/Dropbox/CompEcon_class/oxfiles/blp_example_estimation.ox

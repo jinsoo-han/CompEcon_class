@@ -1,0 +1,99 @@
+#include<oxstd.h>
+#import <maximize>
+#import <solvenle>
+#include <oxdraw.h>
+#include <oxfloat.h>
+#include <oxprob.h>
+
+/* Declare common variables */
+decl n,T,J,aProductID;
+decl vShare,vShare0,mZ,mX,mIV;
+decl vDelta0,A;
+decl mEta,nbGrid,vWeight;
+
+#import<blp_func>
+
+
+enum{productid,marketid,share,share0,delta_true,xi_true,intercept,x1,x2,x3,z1,z2};
+enum{eta1,eta2,weight};
+
+main()
+{
+  /* Sample size */
+  println("////////////////////");
+  println("Specification");
+  decl nbRC=2;
+  println("nb RC = ",nbRC);
+  println("////////////////////");
+
+  /* Load parameter vector */
+  decl vNLparam_true=loadmat("blp_example_param.dta");
+  println("vNLparam_true : ",vNLparam_true);
+  
+  /* Load characteristics data */
+  decl mData=loadmat("blp_example_data.dta");
+  mX=mData[][<intercept,x1,x2,x3>];
+  decl vDelta_true=mData[][delta_true];
+  vDelta0=vDelta_true;
+  decl mDiffIV=mData[][<z1,z2>];
+  vShare=mData[][share];
+  vShare0=mData[][share0];
+  mZ=mData[][<x2,x3>];
+  mIV=mX~mDiffIV;
+  decl mPanelID=mData[][<productid,marketid>];
+  T=columns(unique(mData[][marketid]));
+  decl J=columns(unique(mData[][productid]));
+  n=J*T;
+
+  /* Load integration grid/weight */
+  decl mGrid=loadmat("blp_example_grid.dta");
+  mEta=mGrid[][<eta1,eta2>];
+  vWeight=mGrid[][weight];
+  nbGrid=rows(vWeight);
+
+  /* Panel Structure */
+  decl i;
+  aProductID=new array[T];
+  for(i=1;i<=T;i++) aProductID[i-1]=vecindex(mPanelID[][1],i);
+
+  /* Weighting matrix */
+  A=invert(mIV'mIV);
+
+  /* Test that the inversion algorithm works */
+  vDelta0=vDelta_true + ranu(n,1);
+  inverse(&vDelta0,vNLparam_true);
+  println("norm between true and inverted delta: ",norm(vDelta0-vDelta_true));
+
+  /*******************************************************************************************/
+  /* GMM Estimation */
+
+  /* BFGS and Simplex */
+  decl eps1=10^(-6);
+  decl eps2=10^(-3);
+  MaxControlEps(eps1,eps2);
+  MaxControl(500,1);
+  decl vNLparam_est=vNLparam_true;
+  decl vLparam_est;
+  decl Q,iConv;
+  
+  /* Estimate the model using "true" starting value */
+  decl time0=timer();
+  vNLparam_est=vNLparam_true;
+  vDelta0=vDelta_true;
+  iConv=MaxBFGS(gmm_obj,&vNLparam_est,&Q,0,1);
+  if(iConv!=MAX_CONV) {
+    vNLparam_est=vNLparam_true;
+    vDelta0=vDelta_true;
+    iConv=MaxSimplex(gmm_obj,&vNLparam_est,&Q,constant(1/4,vNLparam_est));
+  }
+  decl cpu_sec=(timer()-time0)/100;
+  decl conv_status=MaxConvergenceMsg(iConv);
+  println("Convergence status: ",MaxConvergenceMsg(iConv));
+
+  /* Estimate linear parameter */
+  inverse(&vDelta0,vNLparam_est);
+  vLparam_est=ivreg(vDelta0,mX,mIV,A);
+  decl vParam_full=vNLparam_est|vLparam_est;
+  println("linear parameters : ",vLparam_est);
+
+}

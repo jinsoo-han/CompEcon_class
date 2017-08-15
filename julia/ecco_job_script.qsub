@@ -1,0 +1,12 @@
+#!/bin/bash -l
+#PBS -N julia_script
+#PBS -l ncpus=4
+#PBS -l mem=32768mb
+#PBS -l walltime=01:00:00
+#PBS -l nodes=compute-0-2
+#PBS -m abe
+#PBS -j eo
+#PBS -M han3751@gmail.com
+source /etc/profile.d/modules.sh
+module load julia
+julia -p 10 ~/Dropbox/CompEcon_class/julia/blp_example_estimation.jl
