@@ -3,10 +3,10 @@
 #PBS -l ncpus=4
 #PBS -l mem=32768mb
 #PBS -l walltime=01:00:00
-#PBS -l nodes=compute-0-2
-#PBS -m abe
-#PBS -j eo
+#PBS -l nodes=compute-0-8
+#PBS -j o
+#PBS -j e
 #PBS -M han3751@gmail.com
 source /etc/profile.d/modules.sh
 module load julia
-julia -p 5 ~/Dropbox/CompEcon_class/julia/blp_example_estimation.jl
+julia p -5 ~/Dropbox/CompEcon_class/julia/blp/blp_example_estimation.jl

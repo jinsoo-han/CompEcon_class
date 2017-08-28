@@ -1,0 +1,408 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Assignment: Demand Calculation
+\end_layout
+
+\begin_layout Section
+Assignment
+\end_layout
+
+\begin_layout Standard
+The goal of the assignment is to calculate the market share of 
+\begin_inset Formula $j$
+\end_inset
+
+, 
+\begin_inset Formula $s_{j}$
+\end_inset
+
+, from the BLP model using Julia.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Set-up 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Go to XXX and download blp_example_data.csv and blp_example_grid.csv.
+ The data consists of 50 products in 20 markets with 100 customers (i.e.,
+ simulations).
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $u_{ij}=\beta_{0}+\sum_{k=1}^{3}\beta_{k}x_{k}+\xi_{j}+\sum_{k=2}^{3}\theta_{k}x_{jk}\eta_{ik}+\epsilon_{ij}=\delta_{j}+\mu_{ij}$
+\end_inset
+
+ where 
+\begin_inset Formula $\beta=(-5.0,\,1.0,\,1.0,\,1.0)$
+\end_inset
+
+ and 
+\begin_inset Formula $\theta=(1.4,\,1.4)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Write a new Julia file and load in the data.
+ Hint: use the package called DataFrames.
+\end_layout
+
+\begin_layout Enumerate
+One way of using computers to evaluate the intergral (defined in Equation
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:marketshare"
+
+\end_inset
+
+) is to use simulations.
+ Write a function in Julia that calculates 
+\begin_inset Formula $s_{jt}(\delta_{jt},\theta,t|X_{t},\eta)\approx\sum_{i}^{I}(\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})})w_{i}$
+\end_inset
+
+ for each market 
+\begin_inset Formula $t$
+\end_inset
+
+.
+ Be sure to write the function such that shares are evaluated for each market
+ (i.e., 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $s_{jt}$
+\end_inset
+
+ not 
+\begin_inset Formula $s_{j}$
+\end_inset
+
+).
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $I$
+\end_inset
+
+ is the total number of simulations and 
+\begin_inset Formula $w_{i}$
+\end_inset
+
+ is the weight associated with each simulation.
+ These are pre-specified in blp_example_grid.csv
+\end_layout
+
+\begin_layout Enumerate
+Step 1: 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+construct a matrix of size 
+\begin_inset Formula $J\,x\,I$
+\end_inset
+
+ with each element contaning the value,
+\begin_inset Formula $\sum_{k}\theta_{k}x_{jkt}\eta_{ik}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Step 2: construct 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+a matrix of size 
+\begin_inset Formula $J\,x\,I$
+\end_inset
+
+ with each element contaning the value, 
+\begin_inset Formula $\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Step 3: construct a vector of size 
+\begin_inset Formula $J$
+\end_inset
+
+ with each element containing the value, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\sum_{i}^{I}(\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})})w_{i}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Write a seperate Julia code that loops over each market, evaluate the function
+ defined in 2, and store the market shares from all the markets in one large
+ vector.
+ Design the code as the following:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Step 1: define a J*T by 1 empty vector of 
+\begin_inset Formula $S_{j}$
+\end_inset
+
+ (i.e., 
+\begin_inset Formula $S_{j}=(s_{j,1},s_{j,2},...,s_{j,T})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Step 2: write a loop over the markets.
+ For each loop, evaluate 
+\begin_inset Formula $s_{jt}$
+\end_inset
+
+ defined in the previous part and update the appropriate part of 
+\begin_inset Formula $S_{j}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Optional: Parallelize the loop in 4 and measure the difference in time spent
+ for evaluation.
+ Hint: use the function called pmap.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagebreak
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Model
+\end_layout
+
+\begin_layout Standard
+This section is not necessary to complete the assignment above.
+ For the details of the derviation, look Berry, Levinsohn and Pakes (ECMA,
+ 1995).
+ If you want further reading, another useful reference is Kenneth Train's
+ Discrete Choice Methods with Simulation (url: https://eml.berkeley.edu/books/choi
+ce2.html).
+\end_layout
+
+\begin_layout Standard
+Consider an individual 
+\begin_inset Formula $i$
+\end_inset
+
+ making a discrete choice among 
+\begin_inset Formula $J+1$
+\end_inset
+
+ alternatives/products.
+ The utility she obtains if product 
+\begin_inset Formula $j$
+\end_inset
+
+ is selected is:
+\end_layout
+
+\begin_layout Standard
+\align block
+\begin_inset Formula 
+\begin{align*}
+u_{ij} & =X_{j}^{'}\boldsymbol{\beta}_{\boldsymbol{\boldsymbol{i}}}+\xi_{j}+\epsilon_{ij}\\
+ & =\sum_{k}\beta_{k}x_{jk}+\sum_{k}\theta_{k}x_{jk}\eta_{ik}+\xi_{j}+\epsilon_{ij}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $(\beta,\theta)$
+\end_inset
+
+ are model parameters to be estimated, 
+\begin_inset Formula $\eta_{i}\sim F_{\eta}$
+\end_inset
+
+ denote the individual-specific marginal utilities for product characteristics,
+ 
+\begin_inset Formula $\xi_{j}$
+\end_inset
+
+ are unobserved product characteristics, and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\epsilon_{ij}$
+\end_inset
+
+ are idiosyncratic errors (i.e., i.i.d.
+ Type-1- Extreme-Value (T1EV) random variates).
+ With the above set-up, BLP shows that the market share of a product 
+\begin_inset Formula $j$
+\end_inset
+
+ is:
+\end_layout
+
+\begin_layout Standard
+\align block
+\begin_inset Formula 
+\begin{align}
+s_{j} & =\int(\frac{exp(\delta_{j}+\sum_{k}\theta_{k}x_{jk}\eta_{ik})}{1+\sum_{j'}^{J}exp(\delta_{j'+\sum_{k}\theta_{k}x_{jk}\eta_{ik}})})dF_{\nu}(\eta_{i}).\label{eq:marketshare}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

@@ -1,0 +1,122 @@
+%\documentclass{beamer}
+\documentclass[handout]{beamer}
+\usetheme{Boadilla}
+%\usepackage{authblk}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{tabularx}
+\usepackage{comment}
+\usepackage{chicago}
+\usepackage{caption,subfig, comment, color,colortbl}
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertsection
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\theoremstyle{plain}
+\newtheorem{thm}{\protect\theoremname}
+\makeatother
+\providecommand{\theoremname}{Theorem}
+
+
+\definecolor{LinkBlue}{rgb}{0.5,0.4,1}
+\definecolor{LRed}{rgb}{1,.8,.8}
+\definecolor{Pink}{rgb}{1.6,0.4,0.5}
+\definecolor{LYellow}{rgb}{2.38,2.38,0.6}
+
+\title{Nested-fixed point econometric models: \\ Non-linear IV example}
+\author{Jean-Fran\c{c}ois Houde \\ Cornell University \& NBER}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{frame}
+\frametitle{Econometric model}
+\begin{itemize}
+\item {\bf Reference:} Berry et al. (ECMA, 1995)
+\item {\bf Panel data-set:} Aggregate data on market shares $s_{jt}$ and characteristics $x_{jt}$, and instrument vector $w_{jt}$. Where $j=1,\dots,J$ is a product identifier, and $t=1,\dots,T$ is a market identifier.
+\item Consider the following {\it mixed-logit} demand system:
+$$\sigma_{j}(\delta_t,x_t;\theta)=\sum_i \frac{\exp(\delta_{jt}+\mu_{ijt})}{1+\exp(\delta_{jt}+\mu_{ijt})}\omega_i$$
+where $\omega_i$ is a {\bf known} PDF weight for consumers of type $i$, and $\mu_{ijt}=\sum_k \theta_k\eta_{ik}x^{(2)}_{ijt,k}$ is the {\it idiosyncratic valuation} for product $j$, and $\delta_{jt}=x_{jt}\beta+\xi_{jt}$ is the {\it average valuation} for $j$.
+\item $\xi_{jt}$ corresponds to the {\bf residual} of the model: Unobserved quality of $j$.
+\item {\bf Assumption:} $E(w_{jt}\cdot \xi_{jt})=0$ (i.e. moment restriction)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Econometric model}
+\begin{itemize}
+\item To impose the moment restrictions, we need to define the {\it inverse demand} function:
+$$\sigma_{j}^{-1}(s_{jt},x_{jt};\theta)=\delta_{jt}=x_{jt}\beta+\xi_{jt}$$
+\item The inverse function must be solved numerically using the following contraction mapping:
+$$\delta_{jt}^{l+1}=\delta_{jt}^l+\ln s_{jt}-\ln \sigma_j(\delta_t^l,x_t;\theta)$$
+Convergence: $||\ln s_{jt}-\ln \sigma_j(\delta_t^l,x_t;\theta)||<\varepsilon$ (e.g. $10^{-12}$)
+\item This inverse mapping implicitly defines the residual function (given parameters):
+$$\rho_{jt}(s_t,x_t;\theta,\beta)=\sigma_{j}^{-1}(s_{jt},x_{jt};\theta)-x_{jt}\beta$$
+\item This leads to a non-linear IV problem (or GMM):
+$$\min_{\theta,\beta} \rho(s_t,x_t;\theta,\beta)^TWA^{-1}W^T\rho(s_t,x_t;\theta,\beta)^T$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sketch of the code}
+{\footnotesize    \begin{enumerate}
+    \item Demand($\delta_t$,$x^{(2)}_t$,$\eta$,$\omega$,$\theta$):
+        \begin{itemize}
+        \item Step 1: Calculate $\mu_{jt}=\sum_k \theta_k\eta_i$
+        \item Step 2: Calculate predicted market shares for all products in market $t$
+        \item Return = $\sigma_j(\delta,x_t;\theta)$
+        \end{itemize}
+    \item Inverse($x^{(2)},\eta,\omega,\theta$)
+	\begin{itemize}
+        \item For each market $t$, solve the fixed-point:
+        \begin{eqnarray*}
+        &&\textrm{Starting values: } \delta_{jt}^0\\
+        &&\textrm{do}\{\\
+       && \quad		\hat{s}_{jt}=\textrm{Demand}(\delta^l_t,x^{(2)}_t,\eta,\omega,\theta)\\
+       &&\quad \delta^{l+1}_{jt}=\delta_{jt}^l+\ln s_{jt}-\ln \hat{s}_{jt} \\
+       &&\quad l=l+1\\
+       &&\}\textrm{while}(||\delta_{jt}^{l}-\delta_{jt}^{l-1}||<10^{-12})
+        \end{eqnarray*}
+        \item {\bf Note:} The fixed-point algorithm can easily be distributed across multiple processors.
+        \item Return = $\delta_{jt}$ for all $j$ and $t$
+        \end{itemize}        
+    \end{enumerate}   }
+\end{frame}
+
+\begin{frame}
+\frametitle{Sketch of the code}
+\begin{itemize}
+    \item GMM$(s,x,z,\theta)$
+    \begin{itemize}
+    \item $\delta_{jt}=$Inverse($x^{(2)},\eta,\omega,\theta$)
+        \item Find the value of $\beta$ given $\theta$ (i.e. OLS):
+    $$\beta(\theta)=(x'x)^{-1}x'\delta$$
+    \item Compute residual: $\rho_{jt}(s_t,x_t;\theta,\beta)=\sigma_{j}^{-1}(s_{jt},x_{jt};\theta)-x_{jt}\beta$
+	  \item Return = $\rho(s_t,x_t;\theta,\beta)^TWA^{-1}W^T\rho(s_t,x_t;\theta,\beta)^T$
+   \end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\end{document}
+

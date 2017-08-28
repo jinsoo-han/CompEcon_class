@@ -8,15 +8,16 @@
 	# Directories;
 		#@everywhere UserPath = "C:/Users/jinshan";
 		#@everywhere UserPath = "/Users/jinsoohan";
-		@everywhere UserPath = homedir()
-		@everywhere Path = "/Dropbox/CompEcon_class/julia";
-		@everywhere cd(string(UserPath,Path));
+		#@everywhere UserPath = homedir()
+		#@everywhere Path = "/Dropbox/CompEcon_class/julia";
+		#@everywhere cd(string(UserPath,Path));
 		#@everywhere cd("./Dropbox/CompEcon_class/julia");
 		#pwd()
+		#@everywhere cd(string(UserPath,Path));
 	# Load standard packages;
 		@everywhere using DataFrames, Optim, Distributions;
 	# Load user-written packages;
-		@everywhere include("blp_func.jl");
+		@everywhere include("$(homedir())/Dropbox/CompEcon_class/julia/blp/blp_func.jl");
 		#using BLP_module
 	#include(string(UserPath,Path,"/buildquadrature_v1.jl"));
 		#@everywhere include(string(UserPath,Path,"/buildconsumertype_v1.jl"));
@@ -30,12 +31,12 @@
 	println("////////////////////");
 
 	# Load parameter vector
-	@everywhere vNLparam_true=Array(readtable("blp_example_param.csv"));
+	@everywhere vNLparam_true=Array(readtable("$(homedir())/Dropbox/CompEcon_class/julia/blp/blp_data/blp_example_param.csv"));
 	println("vNLparam_true : ",vNLparam_true);
 	@everywhere vLParam=zeros(4,1);
 
 	# Load characteristics data
-	@everywhere mData=readtable("blp_example_data.csv");
+	@everywhere mData=readtable("$(homedir())/Dropbox/CompEcon_class/julia/blp/blp_data/blp_example_data.csv");
 		# Check data with eye
 		#head(mData); #tail(mData);
 	@everywhere mX=Array(mData[:,[:intercept, :x1, :x2, :x3]]);
@@ -51,7 +52,7 @@
 	@everywhere n=J*T;
 
 	# Load integration grid/weight
-	@everywhere mGrid=readtable("blp_example_grid.csv");
+	@everywhere mGrid=readtable("$(homedir())/Dropbox/CompEcon_class/julia/blp/blp_data/blp_example_grid.csv");
   	@everywhere mEta=Array(mGrid[:,[:eta1,:eta2]]);
   	@everywhere vWeight=Array(mGrid[:weight]);
   	@everywhere nbGrid=size(vWeight,1);
