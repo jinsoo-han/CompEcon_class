@@ -97,9 +97,20 @@ The goal of the assignment is to calculate the market share of
 \end_layout
 
 \begin_layout Enumerate
-Set-up: Go to XXX and download blp_example_data.csv and blp_example_grid.csv.
- Let 
-\begin_inset Formula $u_{ij}=\beta_{0}+\sum_{k=1}^{3}\beta_{k}x_{k}+\sum_{k=2}^{3}\theta_{k}x_{jk}\eta_{ik}=\delta_{j}+\mu_{ij}$
+Set-up 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Go to https://github.com/jinsoo-han/CompEcon_class/tree/master/julia/blp/blp_data
+ and download blp_example_data.csv and blp_example_grid.csv.
+ The data consists of 50 products in 20 markets with 100 customers (i.e.,
+ simulations).
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $u_{ij}=\beta_{0}+\sum_{k=1}^{3}\beta_{k}x_{k}+\xi_{j}+\sum_{k=2}^{3}\theta_{k}x_{jk}\eta_{ik}+\epsilon_{ij}=\delta_{j}+\mu_{ij}$
 \end_inset
 
  where 
@@ -113,20 +124,14 @@ Set-up: Go to XXX and download blp_example_data.csv and blp_example_grid.csv.
 .
 \end_layout
 
-\begin_deeper
-\begin_layout Enumerate
-The data consists of 50 products in 20 markets with 100 customers (i.e., simulatio
-ns).
-\end_layout
-
 \end_deeper
 \begin_layout Enumerate
 Write a new Julia file and load in the data.
- Hints: use the package, DataFrames.
+ Hint: use the package called DataFrames.
 \end_layout
 
 \begin_layout Enumerate
-One way of using computers to evaluate the intergral (defined in Equation
+One way of using computers to evaluate the integral (defined in Equation
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -136,7 +141,7 @@ reference "eq:marketshare"
 
 ) is to use simulations.
  Write a function in Julia that calculates 
-\begin_inset Formula $s_{j}\approx\sum_{i}^{I}(\frac{exp(\delta_{j}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{j}+\mu_{ij})})w_{i}$
+\begin_inset Formula $s_{jt}(\delta_{jt},\theta,t|X_{t},\eta)\approx\sum_{i}^{I}(\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})})w_{i}$
 \end_inset
 
  for each market 
@@ -158,7 +163,11 @@ reference "eq:marketshare"
 \noun off
 \color none
 
-\begin_inset Formula $s_{j,t}$
+\begin_inset Formula $s_{jt}$
+\end_inset
+
+ not 
+\begin_inset Formula $s_{j}$
 \end_inset
 
 ).
@@ -194,8 +203,8 @@ construct a matrix of size
 \begin_inset Formula $J\,x\,I$
 \end_inset
 
- with each element contaning the value,
-\begin_inset Formula $\sum_{k}\theta_{k}x_{jk}\eta_{ik}$
+ with each element containing the value,
+\begin_inset Formula $\sum_{k}\theta_{k}x_{jkt}\eta_{ik}$
 \end_inset
 
 .
@@ -218,8 +227,8 @@ a matrix of size
 \begin_inset Formula $J\,x\,I$
 \end_inset
 
- with each element contaning the value, 
-\begin_inset Formula $\frac{exp(\delta_{j}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{j}+\mu_{ij})}$
+ with each element containing the value, 
+\begin_inset Formula $\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})}$
 \end_inset
 
 .
@@ -243,7 +252,7 @@ Step 3: construct a vector of size
 \noun off
 \color none
 
-\begin_inset Formula $\sum_{i}^{I}(\frac{exp(\delta_{j}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{j}+\mu_{ij})})w_{i}$
+\begin_inset Formula $\sum_{i}^{I}(\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})})w_{i}$
 \end_inset
 
 .
@@ -251,11 +260,9 @@ Step 3: construct a vector of size
 
 \end_deeper
 \begin_layout Enumerate
-Write a seperate Julia code that loops over each market, evaluate the function
+Write a separate Julia code that loops over each market, evaluate the function
  defined in 2, and store the market shares from all the markets in one large
  vector.
- Compute the norm of the difference between the computed market shares and
- the actual market shares.
  Design the code as the following:
 \end_layout
 
@@ -289,6 +296,7 @@ Step 2: write a loop over the markets.
 \begin_layout Enumerate
 Optional: Parallelize the loop in 4 and measure the difference in time spent
  for evaluation.
+ Hint: use the function called pmap.
 \end_layout
 
 \begin_layout Standard
@@ -308,28 +316,15 @@ pagebreak
 \end_layout
 
 \begin_layout Section
-Theory
+Model
 \end_layout
 
 \begin_layout Standard
 This section is not necessary to complete the assignment above.
- Here, I provide the basic theory (i.e., derviation) of the logit and the
- random-coefficients (i.e., BLP) demand model.
- For the details of the derviation, look McFadden (1974), Berry (1994) and
- Berry, Levinsohn and Pakes (1995).
- Another useful reference is Kenneth Train's Discrete Choice Methods with
- Simulation (url: https://eml.berkeley.edu/books/choice2.html)
-\end_layout
-
-\begin_layout Subsection
-Logit Demand Model
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Logit-Demand-Model"
-
-\end_inset
-
-
+ For the details of the model, look Berry, Levinsohn and Pakes (ECMA, 1995).
+ If you want further reading, Kenneth Train's Discrete Choice Methods with
+ Simulation is another useful reference (url: https://eml.berkeley.edu/books/choic
+e2.html).
 \end_layout
 
 \begin_layout Standard
@@ -346,232 +341,59 @@ Consider an individual
 \begin_inset Formula $j$
 \end_inset
 
- is selected is
+ is selected is:
 \end_layout
 
 \begin_layout Standard
 \align block
 \begin_inset Formula 
 \begin{align*}
-u_{ij} & =X_{j}^{'}\beta+\epsilon_{ij}\\
- & =\delta_{j}+\epsilon_{ij}
+u_{ij} & =X_{j}^{'}\boldsymbol{\beta}_{\boldsymbol{\boldsymbol{i}}}+\xi_{j}+\epsilon_{ij}\\
+ & =\sum_{k}\beta_{k}x_{jk}+\sum_{k}\theta_{k}x_{jk}\eta_{ik}+\xi_{j}+\epsilon_{ij}
 \end{align*}
 
 \end_inset
 
 where 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $\epsilon_{ij}$
+\begin_inset Formula $(\beta,\theta)$
 \end_inset
 
- are i.i.d.
- Type-1- Extreme-Value (T1EV) random variates.
- 
-\end_layout
-
-\begin_layout Standard
-Then, the probability that 
-\begin_inset Formula $i$
-\end_inset
-
- chooses 
-\begin_inset Formula $j$
-\end_inset
-
- is
-\end_layout
-
-\begin_layout Standard
-\align block
-\begin_inset Formula 
-\begin{align*}
-P_{ij} & =Prob(\delta_{j}+\epsilon_{ij}>\delta_{j'}+\epsilon_{ij'}\,\forall j'\neq j)\\
- & =Prob(\epsilon_{ij'}<\delta_{j}-\delta_{j'}+\epsilon_{ij}\,\forall j'\neq j).
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $\epsilon_{ij}$
-\end_inset
-
- is given, the conditional probability of choosing 
-\begin_inset Formula $j$
-\end_inset
-
- is 
-\end_layout
-
-\begin_layout Standard
-\align block
-\begin_inset Formula 
-\begin{align*}
-P_{ij}|\epsilon_{ij} & =\prod_{j'\neq j}exp(-exp(-(\delta_{j}-\delta_{j'}+\epsilon_{ij}))).
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Because 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $\epsilon_{ij}$
-\end_inset
-
- is not given, we need to integrate out the 
-\begin_inset Formula $\epsilon_{ij}$
-\end_inset
-
- to obtain the unconditional probability of choosing 
-\begin_inset Formula $j$
-\end_inset
-
-:
-\end_layout
-
-\begin_layout Standard
-\align block
-\begin_inset Formula 
-\begin{align*}
-P_{ij} & =\int(\prod_{j'\neq j}exp(-exp(-(\delta_{j}-\delta_{j'}+\epsilon_{ij}))))e^{-\epsilon_{ij}}e^{-e^{-\epsilon_{ij}}}d(\epsilon_{ij}).\\
- & =\frac{exp(\delta_{j})}{\sum_{j'}^{J+1}exp(\delta_{j'})}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If the alternative 
-\begin_inset Formula $j=0$
-\end_inset
-
- (i.e., the outside option of not buying) is normalized (i.e., 
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\uuline off
-\uwave off
-\noun off
-\color none
-
-\begin_inset Formula $\delta_{0}=0$
-\end_inset
-
-), 
-\begin_inset Formula $P_{ij}=\frac{exp(\delta_{j})}{1+\sum_{j'}^{J}exp(\delta_{j'})}$
-\end_inset
-
-.
- Since 
-\begin_inset Formula $i$
-\end_inset
-
- is a representative agent, 
-\begin_inset Formula $P_{ij}$
-\end_inset
-
- is the market share, 
-\begin_inset Formula $s_{j}$
-\end_inset
-
-, of the alternative 
-\begin_inset Formula $j$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Random-coefficients Demand Model
-\end_layout
-
-\begin_layout Standard
-Let's introduce heterogeneity to attenuate the problems of the IIA property
- of the logit model.
- That is, let 
-\begin_inset Formula $\beta$
-\end_inset
-
- be individual-specific.
- Then, the utility can be written as
-\end_layout
-
-\begin_layout Standard
-\align block
-\begin_inset Formula 
-\begin{align*}
-u_{ij} & =X_{j}^{'}\boldsymbol{\beta}_{\boldsymbol{\boldsymbol{i}}}+\epsilon_{ij}\\
- & =X_{j}^{'}\beta+\sum_{k}\theta_{k}x_{jk}\eta_{ik}+\epsilon_{ij}
-\end{align*}
-
-\end_inset
-
-where 
+ are model parameters to be estimated, 
 \begin_inset Formula $\eta_{i}\sim F_{\eta}$
 \end_inset
 
- denote the marginal utilities for product characteristics.
- Now, because individuals are different in utils one can drive from the
- same product, we need to integrate not only the 
+ denote the individual-specific marginal utilities for product characteristics,
+ 
+\begin_inset Formula $\xi_{j}$
+\end_inset
+
+ are unobserved product characteristics, and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
 \begin_inset Formula $\epsilon_{ij}$
 \end_inset
 
- but also the 
-\begin_inset Formula $\eta_{ik}$
-\end_inset
-
- in order to obtain the market share of the product 
+ are idiosyncratic errors (i.e., i.i.d.
+ Type-1- Extreme-Value (T1EV) random variates).
+ With the above set-up, BLP shows that the market share of a product 
 \begin_inset Formula $j$
 \end_inset
 
-.
- That is, 
+ is:
+\end_layout
+
+\begin_layout Standard
+\align block
 \begin_inset Formula 
 \begin{align}
 s_{j} & =\int(\frac{exp(\delta_{j}+\sum_{k}\theta_{k}x_{jk}\eta_{ik})}{1+\sum_{j'}^{J}exp(\delta_{j'+\sum_{k}\theta_{k}x_{jk}\eta_{ik}})})dF_{\nu}(\eta_{i}).\label{eq:marketshare}

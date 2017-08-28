@@ -84,15 +84,18 @@ Assignment
 \end_layout
 
 \begin_layout Standard
-The goal of the assignment is to calculate the market share of 
-\begin_inset Formula $j$
-\end_inset
-
-, 
+The goal of the assignment is to calculate the market shares, 
 \begin_inset Formula $s_{j}$
 \end_inset
 
-, from the BLP model using Julia.
+, (defined in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:marketshare"
+
+\end_inset
+
+) from the BLP model using Julia.
  
 \end_layout
 
@@ -102,7 +105,8 @@ Set-up
 
 \begin_deeper
 \begin_layout Enumerate
-Go to XXX and download blp_example_data.csv and blp_example_grid.csv.
+Go to https://github.com/jinsoo-han/CompEcon_class/tree/master/julia/blp/blp_data
+ and download blp_example_data.csv and blp_example_grid.csv.
  The data consists of 50 products in 20 markets with 100 customers (i.e.,
  simulations).
 \end_layout
@@ -130,7 +134,7 @@ Write a new Julia file and load in the data.
 \end_layout
 
 \begin_layout Enumerate
-One way of using computers to evaluate the intergral (defined in Equation
+One way of using computers to evaluate the integral (defined in Equation
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -202,7 +206,7 @@ construct a matrix of size
 \begin_inset Formula $J\,x\,I$
 \end_inset
 
- with each element contaning the value,
+ with each element containing the value,
 \begin_inset Formula $\sum_{k}\theta_{k}x_{jkt}\eta_{ik}$
 \end_inset
 
@@ -226,7 +230,7 @@ a matrix of size
 \begin_inset Formula $J\,x\,I$
 \end_inset
 
- with each element contaning the value, 
+ with each element containing the value, 
 \begin_inset Formula $\frac{exp(\delta_{jt}+\mu_{ij})}{1+\sum_{j'}^{J}exp(\delta_{jt}+\mu_{ij})}$
 \end_inset
 
@@ -259,7 +263,7 @@ Step 3: construct a vector of size
 
 \end_deeper
 \begin_layout Enumerate
-Write a seperate Julia code that loops over each market, evaluate the function
+Write a separate Julia code that loops over each market, evaluate the function
  defined in 2, and store the market shares from all the markets in one large
  vector.
  Design the code as the following:
@@ -320,11 +324,10 @@ Model
 
 \begin_layout Standard
 This section is not necessary to complete the assignment above.
- For the details of the derviation, look Berry, Levinsohn and Pakes (ECMA,
- 1995).
- If you want further reading, another useful reference is Kenneth Train's
- Discrete Choice Methods with Simulation (url: https://eml.berkeley.edu/books/choi
-ce2.html).
+ For the details of the model, look Berry, Levinsohn and Pakes (ECMA, 1995).
+ If you want further reading, Kenneth Train's Discrete Choice Methods with
+ Simulation is another useful reference (url: https://eml.berkeley.edu/books/choic
+e2.html).
 \end_layout
 
 \begin_layout Standard
