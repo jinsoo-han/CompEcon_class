@@ -1,0 +1,49 @@
+# 0. Introduction
+# If your task requires high computational power, clusters can be very useful.
+# Yet, you need to speak the cluster language to use it most efficiently.
+
+
+# 1. Login
+#= login to ecco using your favorite ssh client
+   (e.g., Mac-Terminal, Windows-PuTTy, Chrome-Secure Shell app) =#
+   ssh <yourid>@ecco.vrdc.cornell.edu
+
+# 2. Using programs
+   module list
+   stata
+   module avail
+   module load stata
+   stata
+   exit
+
+# 3. Using job scheduler
+#= If you sit in front of a machine watching it compute your code,
+   you might as well do it on your local computer...
+   The whole point of ecco is to submit computing jobs remotely
+   such that you can have your life! =#
+
+# 3.1. Interactive qsub
+#= If you are new to a cluster, you might want to launch interactive jobs
+   in order to see how things work =#
+   iqsub
+   qstat
+   qdel <yourjobid>
+
+# 3.2. Advanced qsub
+#= For more advanced jobs, you want to write your own qsub.
+   Useful reference:
+      Tutorial: https://www2.vrdc.cornell.edu/news/ecco/step-4-using-ecco/advanced-qsub/
+      Qsub documentation: http://docs.adaptivecomputing.com/torque/4-1-4/Content/topics/commands/qsub.htm
+=#
+   qsub <yourqsubscript>.qsub
+
+# 4. Submitting a julia job
+# Julia is not available on the head node! It is on the compute nodes.
+# 4.1. Where is Julia...
+   qsub -I -q premium -l nodes=compute-0-2
+   module avail
+   module load julia
+   julia
+
+# 4.2. How to write a Julia qsub
+# Please read ~/cluster_qsub/ecco_job_script.qsub
