@@ -16,10 +16,9 @@ println(nprocs());
 function sphere_vol(r);
     # julia allows Unicode names (in UTF-8 encoding)
     # so either "pi" or the symbol π can be used
-    return 4/3*pi*r^3;
+    return a=4/3*pi*r^3;
 end;
 sphere_vol(3);
-
 
 
 # 2. Directories
@@ -61,14 +60,14 @@ m2
 
 # 4. Loops and Map
 # for loops:
-for i in 1:5;
-  print(i, ", ");
+@time for i = 1:5;
+ println(i);
 end;
 
 # while loops:
 i=1;
-while i<=5;
- print(i,", ");
+@time while i<=5;
+ println(i);
  i+=1; # Shorthand for i = i + 1
 end;
 
@@ -99,9 +98,8 @@ cos(1)
 =#
 Pkg.add("Optim")
 using Optim; #detailed manual @ http://julianlsolvers.github.io/Optim.jl/stable/
-y=0
-rosenbrock(x,y) =  (1.0 - x[1])^2 + 100.0 * (x[2] - x[1]^2)^2;
-result = optimize(x->rosenbrock(x,y), zeros(2), BFGS())
+rosenbrock(x) =  (1.0 - x[1])^2 + 100.0 * (x[2] - x[1]^2)^2;
+result = optimize(x->rosenbrock(x), zeros(2), BFGS())
 result = optimize(rosenbrock, [0.0, 0.0], NelderMead())
 result = optimize(rosenbrock, [0.0, 0.0],BFGS(),
                Optim.Options(g_tol = 1e-12,iterations = 1000,store_trace = true,show_trace = true));
@@ -127,7 +125,7 @@ Optim.minimizer(result);
 # 6. Plots
 # This section only works in Atom
 using Plots;
-plot([cumsum(rand(500).-0.5) cumsum(rand(500).-0.5)])
+a=plot([cumsum(rand(500).-0.5) cumsum(rand(500).-0.5)])
 
 
 
